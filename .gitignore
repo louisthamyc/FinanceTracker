@@ -1,15 +1,25 @@
+# Android & Gradle Build Artifacts (Token Protectors)
+**/build/
+.gradle/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# IDE & Workspace Files (Android Studio / IntelliJ)
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+# Local Credentials & Secrets
 local.properties
+/local.properties
+*.keystore
+*.jks
+
+# Output Packages & Executables
+*.apk
+*.aab
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
