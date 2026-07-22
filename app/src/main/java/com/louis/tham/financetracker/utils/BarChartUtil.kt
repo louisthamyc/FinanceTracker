@@ -17,7 +17,7 @@ object BarChartUtil {
 
     /**
      * Renders a bar chart inside the provided [DrawScope] using Canvas.
-     * Groups transaction entities by date, sums their amounts, and renders them.
+     * Groups transaction entities by month, sums their amounts, and renders them.
      *
      * @param drawScope The DrawScope from Compose Canvas.
      * @param transactions List of transactions to visualize.
@@ -55,14 +55,20 @@ object BarChartUtil {
             return
         }
 
-        // Group transactions by date, sum amounts, and sort chronologically.
-        // Date format: "yyyy-MM-dd"
+        // Group transactions by month, sum amounts, and sort chronologically.
+        // Month format: "yyyy-MM"
         val groupedData = transactions
-            .groupBy { it.date }
+            .groupBy { transaction ->
+                if (transaction.date.length >= 7) {
+                    transaction.date.substring(0, 7)
+                } else {
+                    transaction.date
+                }
+            }
             .mapValues { entry -> entry.value.sumOf { it.amount } }
             .toList()
-            .sortedBy { it.first } // Sorted chronologically
-            .takeLast(7)          // Limit to latest 7 days with transactions for layout aesthetic
+            .sortedBy { it.first } // Sorted chronologically by year-month
+            .takeLast(6)          // Limit to latest 6 months with transactions for layout aesthetic
 
         if (groupedData.isEmpty()) {
             return
@@ -138,8 +144,9 @@ object BarChartUtil {
             isAntiAlias = true
         }
 
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
+        val monthInputFormat = SimpleDateFormat("yyyy-MM", Locale.getDefault())
+        val dayInputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("MMM", Locale.getDefault())
 
         for (index in 0 until barCount) {
             val (dateStr, amount) = groupedData[index]
@@ -149,9 +156,13 @@ object BarChartUtil {
             val barHeightVal = (amount / maxVal * chartHeight).toFloat()
             val yStart = paddingTop + chartHeight - barHeightVal
 
-            // Format date string for displaying underneath
+            // Format month string for displaying underneath
             val displayDate = try {
-                val date = inputFormat.parse(dateStr)
+                val date = if (dateStr.length == 7) {
+                    monthInputFormat.parse(dateStr)
+                } else {
+                    dayInputFormat.parse(dateStr)
+                }
                 if (date != null) outputFormat.format(date) else dateStr
             } catch (_: Exception) {
                 dateStr
@@ -197,7 +208,7 @@ object BarChartUtil {
                 }
             }
 
-            // Draw X-axis label (date)
+            // Draw X-axis label (month)
             drawScope.drawContext.canvas.nativeCanvas.drawText(
                 displayDate,
                 xStart + barWidth / 2f,

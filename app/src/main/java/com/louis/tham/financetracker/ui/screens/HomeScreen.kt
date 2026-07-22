@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
@@ -36,6 +38,9 @@ import com.louis.tham.financetracker.core.mvi.contracts.HomeState
 import com.louis.tham.financetracker.core.mvi.viewmodels.HomeViewModel
 import com.louis.tham.financetracker.ui.theme.FinanceTrackerTheme
 import com.louis.tham.financetracker.utils.BarChartUtil
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 @Composable
@@ -58,12 +63,44 @@ fun HomeScreen(
     )
 }
 
+private fun calculateCurrentMonthTotal(transactions: List<TransactionEntity>): Double {
+    val currentMonth = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Date())
+    return transactions
+        .filter { it.date.startsWith(currentMonth) }
+        .sumOf { it.amount }
+}
+
+private fun calculatePreviousMonthTotal(transactions: List<TransactionEntity>): Double {
+    val cal = Calendar.getInstance().apply {
+        add(Calendar.MONTH, -1)
+    }
+    val prevMonth = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(cal.time)
+    return transactions
+        .filter { it.date.startsWith(prevMonth) }
+        .sumOf { it.amount }
+}
+
+private fun calculateMonthOverMonthDiffPercentage(
+    currentMonthTotal: Double,
+    prevMonthTotal: Double
+): String {
+    if (prevMonthTotal == 0.0) {
+        return if (currentMonthTotal > 0.0) "+100.0%" else "+0.0%"
+    }
+    val diff = ((currentMonthTotal - prevMonthTotal) / prevMonthTotal) * 100.0
+    return String.format(Locale.US, "%+.1f%%", diff)
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeContent(
     state: HomeState,
     onClick: () -> Unit
 ) {
+    val currentMonthTotal = calculateCurrentMonthTotal(state.transactionList)
+    val prevMonthTotal = calculatePreviousMonthTotal(state.transactionList)
+    val monthDiffPercentage = calculateMonthOverMonthDiffPercentage(currentMonthTotal, prevMonthTotal)
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = { TopAppBar(title = { Text("Transactions   ") }) },
@@ -84,6 +121,7 @@ fun HomeContent(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
             Text("Financial Summary")
@@ -101,12 +139,12 @@ fun HomeContent(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text("Total Balance")
-                        Text("RM 5000.00")
+                        Text("RM ${String.format(Locale.US, "%.2f", currentMonthTotal)}")
                     }
                     Column(
                         horizontalAlignment = Alignment.End
                     ) {
-                        Text("+2.1%", fontSize = 12.sp)
+                        Text(monthDiffPercentage, fontSize = 12.sp)
                         Text("this month", fontSize = 12.sp)
                     }
                 }
@@ -140,7 +178,7 @@ fun HomeContent(
                 }
             }
             Text("Recent Transactions", modifier = Modifier.padding(bottom = 4.dp))
-            state.transactionList.forEach { transactionEntity ->
+            state.transactionList.takeLast(5).forEach { transactionEntity ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
