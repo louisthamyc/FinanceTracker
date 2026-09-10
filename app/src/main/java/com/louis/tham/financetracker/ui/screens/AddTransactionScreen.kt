@@ -45,12 +45,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.louis.tham.financetracker.R
 import com.louis.tham.financetracker.core.models.constants.TransactionType
 import com.louis.tham.financetracker.core.mvi.contracts.AddTransactionEffect
 import com.louis.tham.financetracker.core.mvi.contracts.AddTransactionIntent
@@ -102,7 +104,7 @@ fun AddTransactionContent(
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Add Transaction") }, navigationIcon = {
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.add_transaction)) }, navigationIcon = {
             IconButton(onClick = onNavigateBack) {
                 Icon(
                     Icons.AutoMirrored.Default.ArrowBack,
@@ -119,7 +121,7 @@ fun AddTransactionContent(
                     onIntent(AddTransactionIntent.OnSaveClicked)
                 }
             ) {
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
         }
     ) { paddingValues ->
@@ -138,7 +140,7 @@ fun AddTransactionContent(
                 onDismissRequest = {
                     onIntent(AddTransactionIntent.OnDismissError)
                 },
-                title = { Text(text = "Error") },
+                title = { Text(text = stringResource(R.string.error)) },
                 text = { Text(text = state.errorMessage) },
                 confirmButton = {
                     TextButton(
@@ -146,7 +148,7 @@ fun AddTransactionContent(
                             onIntent(AddTransactionIntent.OnDismissError)
                         }
                     ) {
-                        Text("OK")
+                        Text(stringResource(R.string.ok))
                     }
                 }
             )
@@ -162,7 +164,7 @@ fun AddTransactionContent(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.title,
-                label = { Text("Transaction Title") },
+                label = { Text(stringResource(R.string.transaction_title)) },
                 onValueChange = {
                     onIntent(AddTransactionIntent.OnTitleChanged(it))
                 },
@@ -173,7 +175,7 @@ fun AddTransactionContent(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.amount,
-                label = { Text("Amount (RM)") },
+                label = { Text(stringResource(R.string.amount)) },
                 onValueChange = {
                     onIntent(AddTransactionIntent.OnAmountChanged(it))
                 },
@@ -192,7 +194,7 @@ fun AddTransactionContent(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
                 value = state.date,
-                label = { Text("Date & Time") },
+                label = { Text(stringResource(R.string.date_time)) },
                 onValueChange = {},
                 singleLine = true,
                 readOnly = true,
@@ -229,7 +231,7 @@ fun AddTransactionContent(
                     .fillMaxWidth()
                     .requiredHeight(150.dp),
                 value = "",
-                label = { Text("Note (Optional)") },
+                label = { Text(stringResource(R.string.note)) },
                 onValueChange = {
                     onIntent(AddTransactionIntent.OnNoteChanged(it))
                 },
@@ -271,7 +273,7 @@ fun DropdownMenuOutlinedTextField(
                 enabled = true
             ).fillMaxWidth(),
             value = category,
-            label = { Text("Category") },
+            label = { Text(stringResource(R.string.category)) },
             onValueChange = {},
             singleLine = true,
             isError = isCategoryError,

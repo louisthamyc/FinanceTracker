@@ -37,11 +37,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.louis.tham.financetracker.R
 import com.louis.tham.financetracker.core.models.constants.TransactionType
 import com.louis.tham.financetracker.core.models.entity.TransactionEntity
 import com.louis.tham.financetracker.core.models.entity.calculateTotalNetBalance
@@ -96,7 +98,7 @@ fun HomeContent(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { TopAppBar(title = { Text("Transactions   ") }) },
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.transactions)) }) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onClick,
@@ -117,7 +119,7 @@ fun HomeContent(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            Text("Financial Summary")
+            Text(stringResource(R.string.financial_summary))
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -128,7 +130,7 @@ fun HomeContent(
                         .fillMaxWidth()
                         .padding(12.dp)
                 ) {
-                    Text("Total Net Balance")
+                    Text(stringResource(R.string.total_net_balance))
                     Text(
                         "RM ${String.format(Locale.US, "%.2f", totalNetBalance)}",
                         color = if (totalNetBalance > 0)
@@ -137,7 +139,7 @@ fun HomeContent(
                             MaterialTheme.colorScheme.expense
 
                     )
-                    Text("Current Month", modifier = Modifier.padding(top = 12.dp))
+                    Text(stringResource(R.string.current_month), modifier = Modifier.padding(top = 12.dp))
                     Text("RM ${String.format(Locale.US, "%.2f", currentMonthTotal)}")
                 }
             }
