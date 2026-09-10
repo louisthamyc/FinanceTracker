@@ -10,11 +10,12 @@ class TransactionRepository @Inject constructor(
 ) {
 
     // CREATE
-    suspend fun insertTransaction(title: String, amount: Double, category: String, date: String) {
+    suspend fun insertTransaction(title: String, amount: Double, category: String, type: String, date: String) {
         val newTransaction = TransactionEntity(
             title = title,
             amount = amount,
             category = category,
+            type = type,
             date = date
         )
         transactionDao.insertTransaction(newTransaction)
@@ -26,12 +27,13 @@ class TransactionRepository @Inject constructor(
     }
 
     // UPDATE
-    suspend fun updateTransaction(id: Long, title: String, amount: Double, category: String) {
+    suspend fun updateTransaction(id: Long, title: String, amount: Double, category: String, type: String) {
         val updatedTransaction = TransactionEntity(
             id = id,
             title = title,
             amount = amount,
-            category = category
+            category = category,
+            type = type
         )
         transactionDao.updateTransaction(updatedTransaction)
     }
@@ -48,7 +50,7 @@ interface TransactionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTransaction(transaction: TransactionEntity)
 
-    @Query("SELECT * FROM transactions ORDER BY date ASC")
+    @Query("SELECT * FROM transactions ORDER BY date DESC")
     fun getAllTransactions(): Flow<List<TransactionEntity>>
 
     @Update

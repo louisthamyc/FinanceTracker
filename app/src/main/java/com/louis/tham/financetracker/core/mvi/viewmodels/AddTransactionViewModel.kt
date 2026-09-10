@@ -73,6 +73,15 @@ class AddTransactionViewModel @Inject constructor(
                 }
             }
 
+            is AddTransactionIntent.OnTypeSelected -> {
+                setState {
+                    copy(
+                        type = intent.type,
+                        errorMessage = null
+                    )
+                }
+            }
+
             is AddTransactionIntent.OnSaveClicked -> {
                 saveTransaction()
             }
@@ -135,7 +144,8 @@ class AddTransactionViewModel @Inject constructor(
                     title = currentState.title,
                     amount = currentState.amount.toDouble(),
                     category = currentState.category,
-                    date = currentState.date
+                    date = currentState.date,
+                    type = currentState.type.name
                 )
                 setEffect {
                     AddTransactionEffect.NavigateBack

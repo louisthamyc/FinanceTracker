@@ -1,5 +1,6 @@
 package com.louis.tham.financetracker.core.mvi.contracts
 
+import com.louis.tham.financetracker.core.models.constants.TransactionType
 import com.louis.tham.financetracker.core.mvi.base.UiEffect
 import com.louis.tham.financetracker.core.mvi.base.UiIntent
 import com.louis.tham.financetracker.core.mvi.base.UiState
@@ -16,6 +17,7 @@ data class AddTransactionState(
     val title: String = "",
     val amount: String = "",
     val category: String = "",
+    val type: TransactionType = TransactionType.EXPENSE,
     val date: String = DateUtil.getCurrentDateDisplay(),
     val note: String = "",
     val invalidFields: Set<TransactionField> = emptySet(),
@@ -28,6 +30,7 @@ sealed interface AddTransactionIntent: UiIntent {
     data class OnAmountChanged(val amount: String): AddTransactionIntent
     data class OnCategoryChanged(val category: String): AddTransactionIntent
     data class OnNoteChanged(val note: String): AddTransactionIntent
+    data class OnTypeSelected(val type: TransactionType): AddTransactionIntent
     object OnDateTimeClicked: AddTransactionIntent
     object OnSaveClicked: AddTransactionIntent
     object OnDismissError: AddTransactionIntent
