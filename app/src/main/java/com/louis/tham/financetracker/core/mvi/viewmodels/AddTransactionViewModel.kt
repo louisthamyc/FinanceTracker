@@ -145,7 +145,8 @@ class AddTransactionViewModel @Inject constructor(
                     amount = currentState.amount.toDouble(),
                     category = currentState.category,
                     date = currentState.date,
-                    type = currentState.type.name
+                    type = currentState.type.name,
+                    note = currentState.note
                 )
                 setEffect {
                     AddTransactionEffect.NavigateBack

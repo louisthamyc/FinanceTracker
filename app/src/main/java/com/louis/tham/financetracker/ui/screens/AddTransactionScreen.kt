@@ -230,7 +230,7 @@ fun AddTransactionContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .requiredHeight(150.dp),
-                value = "",
+                value = state.note,
                 label = { Text(stringResource(R.string.note)) },
                 onValueChange = {
                     onIntent(AddTransactionIntent.OnNoteChanged(it))

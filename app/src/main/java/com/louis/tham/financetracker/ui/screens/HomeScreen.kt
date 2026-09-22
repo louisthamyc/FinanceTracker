@@ -60,7 +60,8 @@ import java.util.Locale
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
-    onNavigateToAddTransaction: () -> Unit
+    onNavigateToAddTransaction: () -> Unit,
+    onNavigateToTransactionDetails: (String) -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
@@ -73,7 +74,8 @@ fun HomeScreen(
 
     HomeContent(
         state = state,
-        onClick = onNavigateToAddTransaction
+        onClick = onNavigateToAddTransaction,
+        onTransactionClick = onNavigateToTransactionDetails
     )
 }
 
@@ -91,7 +93,8 @@ private fun calculateCurrentMonthTotal(transactions: List<TransactionEntity>): D
 @Composable
 fun HomeContent(
     state: HomeState,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onTransactionClick: (String) -> Unit
 ) {
     val currentMonthTotal = calculateCurrentMonthTotal(state.transactionList)
     val totalNetBalance = state.transactionList.calculateTotalNetBalance()
@@ -178,7 +181,10 @@ fun HomeContent(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
+                        .padding(vertical = 4.dp),
+                    onClick = {
+                        onTransactionClick(transactionEntity.id.toString())
+                    }
                 ) {
                     Row(
                         modifier = Modifier
@@ -262,7 +268,8 @@ fun HomePreview() {
                     )
                 )
             ),
-            onClick = {}
+            {},
+            {}
         )
     }
 }

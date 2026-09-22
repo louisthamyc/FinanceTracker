@@ -10,13 +10,14 @@ class TransactionRepository @Inject constructor(
 ) {
 
     // CREATE
-    suspend fun insertTransaction(title: String, amount: Double, category: String, type: String, date: String) {
+    suspend fun insertTransaction(title: String, amount: Double, category: String, type: String, date: String, note: String) {
         val newTransaction = TransactionEntity(
             title = title,
             amount = amount,
             category = category,
             type = type,
-            date = date
+            date = date,
+            note = note
         )
         transactionDao.insertTransaction(newTransaction)
     }
@@ -24,6 +25,11 @@ class TransactionRepository @Inject constructor(
     // READ (No 'ResultsChange' wrapper needed! Just raw lists)
     fun getAllTransactions(): Flow<List<TransactionEntity>> {
         return transactionDao.getAllTransactions()
+    }
+
+    // READ (get single transaction by id)
+    fun getTransactionById(id: String): Flow<TransactionEntity> {
+        return transactionDao.getTransactionById(id)
     }
 
     // UPDATE
@@ -52,6 +58,9 @@ interface TransactionDao {
 
     @Query("SELECT * FROM transactions ORDER BY date DESC")
     fun getAllTransactions(): Flow<List<TransactionEntity>>
+
+    @Query("SELECT * FROM transactions WHERE id = :id")
+    fun getTransactionById(id: String): Flow<TransactionEntity>
 
     @Update
     suspend fun updateTransaction(transaction: TransactionEntity)

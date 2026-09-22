@@ -14,7 +14,8 @@ class TransactionEntity (
     val category: String = "",
     val type: String = "",
     val date: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val note: String = ""
 )
 
 fun List<TransactionEntity>.calculateTotalNetBalance(): Double {

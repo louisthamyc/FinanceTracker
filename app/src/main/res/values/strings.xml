@@ -6,6 +6,7 @@
     <string name="transactions">Transactions</string>
     <string name="add_transaction">Add Transaction</string>
     <string name="transaction_title">Transaction Title</string>
+    <string name="transaction_detail">Transaction Detail</string>
     <string name="amount">Amount (RM)</string>
     <string name="category">Category</string>
     <string name="date_time">Date &amp; Time</string>
@@ -13,4 +14,7 @@
     <string name="save">Save</string>
     <string name="error">Error</string>
     <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="transaction_id">Transaction ID</string>
 </resources>
