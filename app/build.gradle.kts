@@ -1,9 +1,19 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.ksp)
     alias(libs.plugins.google.hilt)
     alias(libs.plugins.kotlin.serialization)
+}
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(FileInputStream(localPropertiesFile))
+    }
 }
 
 android {
@@ -24,10 +34,21 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(localProperties.getProperty("KEY_STORE_FILE"))
+            storePassword = localProperties.getProperty("KEY_STORE_PASSWORD")
+            keyAlias = localProperties.getProperty("KEY_KEY_ALIAS")
+            keyPassword = localProperties.getProperty("KEY_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
+            isDebuggable = false
             optimization {
-                enable = false
+                enable = true
             }
         }
     }
@@ -43,6 +64,10 @@ android {
             isReturnDefaultValues = true
         }
     }
+}
+
+base {
+    archivesName.set("${rootProject.name}-${android.defaultConfig.versionName}-v${android.defaultConfig.versionCode}")
 }
 
 dependencies {
