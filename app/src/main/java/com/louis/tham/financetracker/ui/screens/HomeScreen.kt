@@ -79,8 +79,10 @@ fun HomeScreen(
     )
 }
 
-private fun calculateCurrentMonthTotal(transactions: List<TransactionEntity>): Double {
-    val currentMonth = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Date())
+internal fun calculateCurrentMonthTotal(
+    transactions: List<TransactionEntity>,
+    currentMonth: String = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Date())
+): Double {
     val currentMonthTransactions = transactions.filter { it.date.startsWith(currentMonth) }
     val totalIncome = currentMonthTransactions.filter { it.type == TransactionType.INCOME.name }
         .sumOf { it.amount }

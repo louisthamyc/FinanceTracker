@@ -17,7 +17,7 @@ import kotlin.math.abs
 
 object BarChartUtil {
 
-    private fun getSignedAmount(transaction: TransactionEntity): Double {
+    internal fun getSignedAmount(transaction: TransactionEntity): Double {
         val typeName = transaction.type
         return when {
             typeName.equals(TransactionType.INCOME.name, ignoreCase = true) ||
@@ -31,7 +31,7 @@ object BarChartUtil {
         }
     }
 
-    private fun formatAmountLabel(amt: Double): String {
+    internal fun formatAmountLabel(amt: Double): String {
         val absAmt = abs(amt)
         val formattedStr = when {
             absAmt >= 1000.0 -> String.format(Locale.US, "%.1fk", absAmt / 1000.0)
@@ -40,7 +40,7 @@ object BarChartUtil {
         return if (amt > 0) "+$formattedStr" else if (amt < 0) "-$formattedStr" else "0"
     }
 
-    private fun formatYLabel(value: Double): String {
+    internal fun formatYLabel(value: Double): String {
         val absVal = abs(value)
         if (absVal < 0.001) return "0"
         val formatted = when {
@@ -48,6 +48,21 @@ object BarChartUtil {
             else -> String.format(Locale.US, "%.0f", absVal)
         }
         return if (value > 0) "+$formatted" else "-$formatted"
+    }
+
+    internal fun groupTransactionsByMonth(transactions: List<TransactionEntity>): List<Pair<String, Double>> {
+        return transactions
+            .groupBy { transaction ->
+                if (transaction.date.length >= 7) {
+                    transaction.date.substring(0, 7)
+                } else {
+                    transaction.date
+                }
+            }
+            .mapValues { entry -> entry.value.sumOf { getSignedAmount(it) } }
+            .toList()
+            .sortedBy { it.first }
+            .takeLast(3)
     }
 
     /**
@@ -95,20 +110,7 @@ object BarChartUtil {
             return
         }
 
-        // Group transactions by month, calculate net amount (income vs expenses), and sort chronologically.
-        // Month format: "yyyy-MM"
-        val groupedData = transactions
-            .groupBy { transaction ->
-                if (transaction.date.length >= 7) {
-                    transaction.date.substring(0, 7)
-                } else {
-                    transaction.date
-                }
-            }
-            .mapValues { entry -> entry.value.sumOf { getSignedAmount(it) } }
-            .toList()
-            .sortedBy { it.first } // Sorted chronologically by year-month
-            .takeLast(3)          // Limit to latest 3 months with transactions
+        val groupedData = groupTransactionsByMonth(transactions)
 
         if (groupedData.isEmpty()) {
             return

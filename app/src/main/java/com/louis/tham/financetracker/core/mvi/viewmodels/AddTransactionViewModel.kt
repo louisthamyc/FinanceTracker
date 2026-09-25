@@ -1,6 +1,5 @@
 package com.louis.tham.financetracker.core.mvi.viewmodels
 
-import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.viewModelScope
 import com.louis.tham.financetracker.core.db.TransactionRepository
 import com.louis.tham.financetracker.core.mvi.base.BaseViewModel
@@ -33,7 +32,7 @@ class AddTransactionViewModel @Inject constructor(
             }
 
             is AddTransactionIntent.OnAmountChanged -> {
-                if (intent.amount.isDigitsOnly()) {
+                if (intent.amount.all { it.isDigit() }) {
                     setState {
                         copy(
                             amount = intent.amount,
