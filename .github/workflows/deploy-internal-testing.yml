@@ -1,0 +1,53 @@
+name: Native Android Internal Release (Keyless)
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Required for Workload Identity Federation OIDC token generation
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Authenticate to Google Cloud (Workload Identity Federation)
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ secrets.WIP_PROVIDER }}
+          service_account: github-action-finance-track-76@project-432332ea-290f-4af7-a74.iam.gserviceaccount.com
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.SIGNING_KEY_BASE64 }}" | base64 --decode > ${{ github.workspace }}/app/financeTrackerKey.jks
+
+      - name: Grant Gradle Execution Rights
+        run: chmod +x gradlew
+        
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease
+        env:
+          SIGNSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          SIGN_KEY_ALIAS: ${{ secrets.KEY_KEY_ALIAS }}
+          SIGN_KEY_PASSWORD: ${{ secrets.KEY_KEY_PASSWORD }}
+
+      - name: Upload to Google Play Internal Track
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountEmail: github-action-finance-track-76@project-432332ea-290f-4af7-a74.iam.gserviceaccount.com
+          packageName: com.louis.tham.financetracker
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          track: internal # <--- Targets Google Play Internal Testing track
