@@ -16,13 +16,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3 # Enables automatic caching for Gradle & dependencies
+        uses: gradle/actions/setup-gradle@v6 # Enables automatic caching for Gradle & dependencies
 
       - name: Authenticate to Google Cloud (Workload Identity Federation)
         uses: google-github-actions/auth@v3
@@ -50,7 +50,7 @@ jobs:
       - name: Upload to Google Play Internal Track
         uses: r0adkll/upload-google-play@v1
         with:
-          serviceAccountEmail: github-action-finance-track-76@project-432332ea-290f-4af7-a74.iam.gserviceaccount.com
+          serviceAccountJson: ${{ steps.auth.outputs.credentials_file_path }}
           packageName: com.louis.tham.financetracker
           releaseFiles: app/build/outputs/bundle/release/app-release.aab
           track: internal # <--- Targets Google Play Internal Testing track
