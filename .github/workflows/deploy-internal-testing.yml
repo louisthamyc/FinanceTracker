@@ -25,10 +25,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v6 # Enables automatic caching for Gradle & dependencies
 
       - name: Authenticate to Google Cloud (Workload Identity Federation)
+        id: auth
         uses: google-github-actions/auth@v3
         with:
           workload_identity_provider: ${{ secrets.WIP_PROVIDER }}
           service_account: github-action-finance-track-76@project-432332ea-290f-4af7-a74.iam.gserviceaccount.com
+          create_credentials_file: true
 
       - name: Decode Keystore
         run: |
