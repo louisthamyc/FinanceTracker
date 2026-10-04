@@ -28,18 +28,18 @@ android {
         applicationId = "com.louis.tham.financetracker"
         minSdk = 26
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
         create("release") {
-            storeFile = rootProject.file(localProperties.getProperty("KEY_STORE_FILE"))
-            storePassword = localProperties.getProperty("KEY_STORE_PASSWORD")
-            keyAlias = localProperties.getProperty("KEY_KEY_ALIAS")
-            keyPassword = localProperties.getProperty("KEY_KEY_PASSWORD")
+            storeFile = file("financeTrackerKey.jks")
+            storePassword = System.getenv("KEY_STORE_PASSWORD") ?: localProperties.getProperty("KEY_STORE_PASSWORD")
+            keyAlias = System.getenv("KEY_KEY_ALIAS") ?: localProperties.getProperty("KEY_KEY_ALIAS")
+            keyPassword = System.getenv("KEY_KEY_PASSWORD") ?: localProperties.getProperty("KEY_KEY_PASSWORD")
         }
     }
 
@@ -69,9 +69,9 @@ android {
     }
 }
 
-base {
-    archivesName.set("${rootProject.name}-${android.defaultConfig.versionName}-v${android.defaultConfig.versionCode}")
-}
+//base {
+//    archivesName.set("${rootProject.name}-${android.defaultConfig.versionName}-v${android.defaultConfig.versionCode}")
+//}
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
