@@ -40,9 +40,9 @@ jobs:
       - name: Build Release AAB
         run: ./gradlew bundleRelease
         env:
-          SIGNSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-          SIGN_KEY_ALIAS: ${{ secrets.KEY_KEY_ALIAS }}
-          SIGN_KEY_PASSWORD: ${{ secrets.KEY_KEY_PASSWORD }}
+          SIGNSTORE_PASSWORD: ${{ secrets.SIGNSTORE_PASSWORD }}
+          SIGN_KEY_ALIAS: ${{ secrets.SIGN_KEY_ALIAS }}
+          SIGN_KEY_PASSWORD: ${{ secrets.SIGN_KEY_PASSWORD }}
 
       - name: Upload to Google Play Internal Track
         uses: r0adkll/upload-google-play@v1

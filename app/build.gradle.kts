@@ -37,9 +37,9 @@ android {
     signingConfigs {
         create("release") {
             storeFile = file("financeTrackerKey.jks")
-            storePassword = System.getenv("KEY_STORE_PASSWORD") ?: localProperties.getProperty("KEY_STORE_PASSWORD")
-            keyAlias = System.getenv("KEY_KEY_ALIAS") ?: localProperties.getProperty("KEY_KEY_ALIAS")
-            keyPassword = System.getenv("KEY_KEY_PASSWORD") ?: localProperties.getProperty("KEY_KEY_PASSWORD")
+            storePassword = System.getenv("SIGNSTORE_PASSWORD") ?: localProperties.getProperty("SIGNSTORE_PASSWORD")
+            keyAlias = System.getenv("SIGN_KEY_ALIAS") ?: localProperties.getProperty("SIGN_KEY_ALIAS")
+            keyPassword = System.getenv("SIGN_KEY_PASSWORD") ?: localProperties.getProperty("SIGN_KEY_PASSWORD")
 
             // Fail early with a clear message if anything is missing
             when {
