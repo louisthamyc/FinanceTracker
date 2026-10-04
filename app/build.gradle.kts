@@ -40,22 +40,6 @@ android {
             storePassword = System.getenv("SIGNSTORE_PASSWORD") ?: localProperties.getProperty("SIGNSTORE_PASSWORD")
             keyAlias = System.getenv("SIGN_KEY_ALIAS") ?: localProperties.getProperty("SIGN_KEY_ALIAS")
             keyPassword = System.getenv("SIGN_KEY_PASSWORD") ?: localProperties.getProperty("SIGN_KEY_PASSWORD")
-
-            // Fail early with a clear message if anything is missing
-            when {
-                storeFile == null -> {
-                    throw GradleException("❌ ERROR: Missing signing storeFile!")
-                }
-                storePassword == null -> {
-                    throw GradleException("❌ ERROR: Missing signing storePassword!")
-                }
-                keyAlias == null -> {
-                    throw GradleException("❌ ERROR: Missing signing keyAlias!")
-                }
-                keyPassword == null -> {
-                    throw GradleException("❌ ERROR: Missing signing keyPassword!")
-                }
-            }
         }
     }
 
