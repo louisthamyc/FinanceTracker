@@ -2,7 +2,8 @@ name: Native Android Internal Release (Keyless)
 
 on:
   push:
-    branches: [ master ]
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build-and-upload:
@@ -38,9 +39,6 @@ jobs:
 
       - name: Grant Gradle Execution Rights
         run: chmod +x gradlew
-        
-      - name: Run Unit Tests
-        run: ./gradlew testDebugUnitTest
 
       - name: Build Release AAB
         run: ./gradlew bundleRelease

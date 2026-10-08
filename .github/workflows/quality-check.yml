@@ -1,0 +1,31 @@
+name: Android CI Quality Gates
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6 # Enables automatic caching for Gradle & dependencies
+
+      - name: Grant Gradle Execution Rights
+        run: chmod +x gradlew
+        
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest
+
+      - name: Build Debug APK (Verify Compilation)
+        run: ./gradlew assembleDebug

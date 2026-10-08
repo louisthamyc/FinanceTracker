@@ -5,14 +5,18 @@ FinanceTracker is a simple personal Android project. Its main purpose is to expe
 The app is a basic finance tracker for recording and reviewing transactions. It is built with Kotlin and Jetpack Compose, with Room for local data storage.
 
 ## CI/CD workflow
+The workflows in `.github/workflows/quality-check.yml` runs when PR is created to the `master` branch. It:
 
-The workflow in `.github/workflows/deploy-internal-testing.yml` runs when code is pushed to the `master` branch. It:
+1. Checks out the repository and configures JDK 17 and Gradle.
+2. Runs the `testDebugUnitTest` unit test task.
+3. Ensure compilation succeeds by running `assembleDebug`.
+
+The workflows in `.github/workflows/deploy-google-play.yml` runs when tag is pushed to the `master` branch. It:
 
 1. Checks out the repository and configures JDK 17 and Gradle.
 2. Authenticates to Google Cloud using Workload Identity Federation.
-3. Runs the `testDebugUnitTest` unit test task.
-4. Builds a signed release bundle with `bundleRelease`.
-5. Uploads the bundle to the Google Play internal testing track.
+3. Builds a signed release bundle with `bundleRelease`.
+4. Uploads the bundle to the Google Play internal testing track.
 
 To enable the publishing workflow, configure these GitHub Actions repository secrets:
 
