@@ -10,6 +10,7 @@ import com.louis.tham.financetracker.core.mvi.contracts.TransactionField
 import com.louis.tham.financetracker.utils.DateUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +33,8 @@ class AddTransactionViewModel @Inject constructor(
             }
 
             is AddTransactionIntent.OnAmountChanged -> {
-                if (intent.amount.all { it.isDigit() }) {
+                val isValidAmountInput = intent.amount.matches(Regex("\\d*(\\.\\d{0,2})?"))
+                if (isValidAmountInput) {
                     setState {
                         copy(
                             amount = intent.amount,
@@ -43,6 +45,7 @@ class AddTransactionViewModel @Inject constructor(
                 } else {
                     setState {
                         copy(
+                            amount = intent.amount,
                             invalidFields = invalidFields + TransactionField.AMOUNT,
                             errorMessage = null
                         )
@@ -114,7 +117,8 @@ class AddTransactionViewModel @Inject constructor(
             errors.add(TransactionField.TITLE)
         }
 
-        if (currentState.amount.trim().isEmpty() || currentState.amount.toDoubleOrNull() == 0.0) {
+        val amount = currentState.amount.toBigDecimalOrNull()
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) {
             errors.add(TransactionField.AMOUNT)
         }
 
@@ -141,7 +145,7 @@ class AddTransactionViewModel @Inject constructor(
             try {
                 transactionRepository.insertTransaction(
                     title = currentState.title,
-                    amount = currentState.amount.toDouble(),
+                    amount = amount!!,
                     category = currentState.category,
                     date = currentState.date,
                     type = currentState.type.name,

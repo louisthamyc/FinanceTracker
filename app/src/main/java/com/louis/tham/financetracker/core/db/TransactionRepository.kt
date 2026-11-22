@@ -3,6 +3,7 @@ package com.louis.tham.financetracker.core.db
 import androidx.room.*
 import com.louis.tham.financetracker.core.models.entity.TransactionEntity
 import kotlinx.coroutines.flow.Flow
+import java.math.BigDecimal
 import javax.inject.Inject
 
 class TransactionRepository @Inject constructor(
@@ -10,7 +11,7 @@ class TransactionRepository @Inject constructor(
 ) {
 
     // CREATE
-    suspend fun insertTransaction(title: String, amount: Double, category: String, type: String, date: String, note: String) {
+    suspend fun insertTransaction(title: String, amount: BigDecimal, category: String, type: String, date: String, note: String) {
         val newTransaction = TransactionEntity(
             title = title,
             amount = amount,
@@ -33,7 +34,7 @@ class TransactionRepository @Inject constructor(
     }
 
     // UPDATE
-    suspend fun updateTransaction(id: Long, title: String, amount: Double, category: String, type: String) {
+    suspend fun updateTransaction(id: Long, title: String, amount: BigDecimal, category: String, type: String) {
         val updatedTransaction = TransactionEntity(
             id = id,
             title = title,
