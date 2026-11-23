@@ -1,5 +1,6 @@
 package com.louis.tham.financetracker.core.mvi.viewmodels
 
+import java.math.BigDecimal
 import app.cash.turbine.test
 import com.louis.tham.financetracker.core.db.TransactionRepository
 import com.louis.tham.financetracker.core.models.constants.TransactionType
@@ -43,7 +44,7 @@ class TransactionDetailViewModelTest {
         val targetTransaction = TransactionEntity(
             id = 99,
             title = "Gym Membership",
-            amount = 60.0,
+            amount = BigDecimal("60.0"),
             category = "Entertainment",
             type = TransactionType.EXPENSE.name,
             date = "2026-03-01",
@@ -66,7 +67,7 @@ class TransactionDetailViewModelTest {
             assertFalse(loadedState.isLoading)
             assertEquals(99L, loadedState.transaction.id)
             assertEquals("Gym Membership", loadedState.transaction.title)
-            assertEquals(60.0, loadedState.transaction.amount, 0.001)
+            assertEquals(BigDecimal("60.0"), loadedState.transaction.amount)
             assertEquals("Entertainment", loadedState.transaction.category)
             assertEquals("Annual subscription", loadedState.transaction.note)
 
