@@ -36,7 +36,8 @@ object BarChartUtil {
         val absAmt = abs(amt)
         val formattedStr = when {
             absAmt >= 1000.0 -> String.format(Locale.US, "%.1fk", absAmt / 1000.0)
-            else -> String.format(Locale.US, "%.0f", absAmt)
+            absAmt % 1.0 == 0.0 -> String.format(Locale.US, "%.0f", absAmt)
+            else -> String.format(Locale.US, "%.2f", absAmt)
         }
         return if (amt > 0) "+$formattedStr" else if (amt < 0) "-$formattedStr" else "0"
     }
