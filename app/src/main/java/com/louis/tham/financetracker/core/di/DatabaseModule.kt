@@ -3,6 +3,7 @@ package com.louis.tham.financetracker.core.di
 import android.content.Context
 import androidx.room.Room
 import com.louis.tham.financetracker.core.db.AppDatabase
+import com.louis.tham.financetracker.core.db.MIGRATION_2_3
 import com.louis.tham.financetracker.core.db.TransactionDao
 import dagger.Module
 import dagger.Provides
@@ -22,7 +23,7 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "finance_database.db"
-        ).build()
+        ).addMigrations(MIGRATION_2_3).build()
     }
 
     @Provides

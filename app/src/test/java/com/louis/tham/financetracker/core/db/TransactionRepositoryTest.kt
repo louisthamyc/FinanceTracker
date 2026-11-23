@@ -1,5 +1,6 @@
 package com.louis.tham.financetracker.core.db
 
+import java.math.BigDecimal
 import app.cash.turbine.test
 import com.louis.tham.financetracker.core.models.constants.TransactionType
 import com.louis.tham.financetracker.core.models.entity.TransactionEntity
@@ -25,7 +26,7 @@ class TransactionRepositoryTest {
     fun insertTransaction_savesTransactionWithCorrectFields() = runTest {
         repository.insertTransaction(
             title = "Salary",
-            amount = 5000.0,
+            amount = BigDecimal("5000.0"),
             category = "Income",
             type = TransactionType.INCOME.name,
             date = "2026-03-01",
@@ -37,7 +38,7 @@ class TransactionRepositoryTest {
             assertEquals(1, list.size)
             val item = list[0]
             assertEquals("Salary", item.title)
-            assertEquals(5000.0, item.amount, 0.001)
+            assertEquals(BigDecimal("5000.0"), item.amount)
             assertEquals("Income", item.category)
             assertEquals(TransactionType.INCOME.name, item.type)
             assertEquals("2026-03-01", item.date)
@@ -53,7 +54,7 @@ class TransactionRepositoryTest {
 
             repository.insertTransaction(
                 title = "Coffee",
-                amount = 4.50,
+                amount = BigDecimal("4.50"),
                 category = "Food",
                 type = TransactionType.EXPENSE.name,
                 date = "2026-03-02",
@@ -72,8 +73,8 @@ class TransactionRepositoryTest {
     fun getTransactionById_returnsCorrectTransaction() = runTest {
         fakeDao.setInitialTransactions(
             listOf(
-                TransactionEntity(id = 10, title = "Rent", amount = 1200.0, type = TransactionType.EXPENSE.name),
-                TransactionEntity(id = 20, title = "Bonus", amount = 800.0, type = TransactionType.INCOME.name)
+                TransactionEntity(id = 10, title = "Rent", amount = BigDecimal("1200.0"), type = TransactionType.EXPENSE.name),
+                TransactionEntity(id = 20, title = "Bonus", amount = BigDecimal("800.0"), type = TransactionType.INCOME.name)
             )
         )
 
@@ -81,7 +82,7 @@ class TransactionRepositoryTest {
             val item = awaitItem()
             assertEquals(10L, item.id)
             assertEquals("Rent", item.title)
-            assertEquals(1200.0, item.amount, 0.001)
+            assertEquals(BigDecimal("1200.0"), item.amount)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -90,14 +91,14 @@ class TransactionRepositoryTest {
     fun updateTransaction_updatesFieldsSuccessfully() = runTest {
         fakeDao.setInitialTransactions(
             listOf(
-                TransactionEntity(id = 1, title = "Dinner", amount = 30.0, category = "Food", type = "EXPENSE")
+                TransactionEntity(id = 1, title = "Dinner", amount = BigDecimal("30.0"), category = "Food", type = "EXPENSE")
             )
         )
 
         repository.updateTransaction(
             id = 1,
             title = "Fancy Dinner",
-            amount = 65.0,
+            amount = BigDecimal("65.0"),
             category = "Dining",
             type = "EXPENSE"
         )
@@ -105,7 +106,7 @@ class TransactionRepositoryTest {
         repository.getTransactionById("1").test {
             val updated = awaitItem()
             assertEquals("Fancy Dinner", updated.title)
-            assertEquals(65.0, updated.amount, 0.001)
+            assertEquals(BigDecimal("65.0"), updated.amount)
             assertEquals("Dining", updated.category)
             cancelAndIgnoreRemainingEvents()
         }
@@ -115,7 +116,7 @@ class TransactionRepositoryTest {
     fun deleteTransaction_removesTransactionFromDatabase() = runTest {
         fakeDao.setInitialTransactions(
             listOf(
-                TransactionEntity(id = 1, title = "Ticket", amount = 15.0)
+                TransactionEntity(id = 1, title = "Ticket", amount = BigDecimal("15.0"))
             )
         )
 

@@ -11,23 +11,24 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import com.louis.tham.financetracker.core.models.constants.TransactionType
 import com.louis.tham.financetracker.core.models.entity.TransactionEntity
+import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.abs
 
 object BarChartUtil {
 
-    internal fun getSignedAmount(transaction: TransactionEntity): Double {
+    internal fun getSignedAmount(transaction: TransactionEntity): BigDecimal {
         val typeName = transaction.type
         return when {
             typeName.equals(TransactionType.INCOME.name, ignoreCase = true) ||
-            typeName.equals("INCOME", ignoreCase = true) -> abs(transaction.amount)
+            typeName.equals("INCOME", ignoreCase = true) -> transaction.amount.abs()
 
             typeName.equals(TransactionType.EXPENSE.name, ignoreCase = true) ||
-            typeName.equals("EXPENSE", ignoreCase = true) -> -abs(transaction.amount)
+            typeName.equals("EXPENSE", ignoreCase = true) -> transaction.amount.abs().negate()
 
-            transaction.amount < 0 -> transaction.amount
-            else -> -transaction.amount
+            transaction.amount < BigDecimal.ZERO -> transaction.amount
+            else -> transaction.amount.negate()
         }
     }
 
@@ -50,7 +51,7 @@ object BarChartUtil {
         return if (value > 0) "+$formatted" else "-$formatted"
     }
 
-    internal fun groupTransactionsByMonth(transactions: List<TransactionEntity>): List<Pair<String, Double>> {
+    internal fun groupTransactionsByMonth(transactions: List<TransactionEntity>): List<Pair<String, BigDecimal>> {
         return transactions
             .groupBy { transaction ->
                 if (transaction.date.length >= 7) {
@@ -59,7 +60,7 @@ object BarChartUtil {
                     transaction.date
                 }
             }
-            .mapValues { entry -> entry.value.sumOf { getSignedAmount(it) } }
+            .mapValues { entry -> entry.value.fold(BigDecimal.ZERO) { sum, transaction -> sum + getSignedAmount(transaction) } }
             .toList()
             .sortedBy { it.first }
             .takeLast(3)
@@ -116,7 +117,8 @@ object BarChartUtil {
             return
         }
 
-        val values = groupedData.map { it.second }
+        // Keep money value exact; convert only for chart scaling and pixel coordinates.
+        val values = groupedData.map { it.second.toDouble() }
         val maxDataVal = values.maxOrNull() ?: 0.0
         val minDataVal = values.minOrNull() ?: 0.0
 
@@ -215,7 +217,8 @@ object BarChartUtil {
         val outputFormat = SimpleDateFormat("MMM", Locale.getDefault())
 
         for (index in 0 until barCount) {
-            val (dateStr, amount) = groupedData[index]
+            val (dateStr, exactAmount) = groupedData[index]
+            val amount = exactAmount.toDouble()
 
             // Calculate x & y positions
             val xStart = paddingLeft + barSpacing + index * (barWidth + barSpacing)

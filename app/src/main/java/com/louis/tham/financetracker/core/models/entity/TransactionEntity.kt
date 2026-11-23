@@ -3,6 +3,7 @@ package com.louis.tham.financetracker.core.models.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.louis.tham.financetracker.core.models.constants.TransactionType
+import java.math.BigDecimal
 
 
 @Entity(tableName = "transactions")
@@ -10,7 +11,7 @@ class TransactionEntity (
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val title: String = "",
-    val amount: Double = 0.0,
+    val amount: BigDecimal = BigDecimal.ZERO,
     val category: String = "",
     val type: String = "",
     val date: String = "",
@@ -18,12 +19,12 @@ class TransactionEntity (
     val note: String = ""
 )
 
-fun List<TransactionEntity>.calculateTotalNetBalance(): Double {
+fun List<TransactionEntity>.calculateTotalNetBalance(): BigDecimal {
     return sumOf { transaction ->
-        val netAmount: Double = when (transaction.type) {
+        val netAmount: BigDecimal = when (transaction.type) {
             TransactionType.INCOME.name -> transaction.amount
-            TransactionType.EXPENSE.name -> -transaction.amount
-            else -> 0.0
+            TransactionType.EXPENSE.name -> transaction.amount.negate()
+            else -> BigDecimal.ZERO
         }
         netAmount
     }

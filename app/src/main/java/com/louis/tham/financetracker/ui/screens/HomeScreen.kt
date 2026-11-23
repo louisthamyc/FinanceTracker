@@ -53,6 +53,7 @@ import com.louis.tham.financetracker.ui.theme.FinanceTrackerTheme
 import com.louis.tham.financetracker.ui.theme.expense
 import com.louis.tham.financetracker.ui.theme.income
 import com.louis.tham.financetracker.utils.BarChartUtil
+import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -82,7 +83,7 @@ fun HomeScreen(
 internal fun calculateCurrentMonthTotal(
     transactions: List<TransactionEntity>,
     currentMonth: String = SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Date())
-): Double {
+): BigDecimal {
     val currentMonthTransactions = transactions.filter { it.date.startsWith(currentMonth) }
     val totalIncome = currentMonthTransactions.filter { it.type == TransactionType.INCOME.name }
         .sumOf { it.amount }
@@ -138,7 +139,7 @@ fun HomeContent(
                     Text(stringResource(R.string.total_net_balance))
                     Text(
                         "RM ${String.format(Locale.US, "%.2f", totalNetBalance)}",
-                        color = if (totalNetBalance > 0)
+                        color = if (totalNetBalance > BigDecimal.ZERO)
                             MaterialTheme.colorScheme.income
                         else
                             MaterialTheme.colorScheme.expense
@@ -247,7 +248,7 @@ fun HomePreview() {
                     TransactionEntity(
                         id = 12321312312,
                         title = "test",
-                        amount = 12.12,
+                        amount = BigDecimal("12.15"),
                         category = "testing",
                         type = TransactionType.EXPENSE.name,
                         date = "2026-07-16"
@@ -255,7 +256,7 @@ fun HomePreview() {
                     TransactionEntity(
                         id = 12321312312,
                         title = "test",
-                        amount = 22.12,
+                        amount = BigDecimal("22.25"),
                         category = "testing",
                         type = TransactionType.EXPENSE.name,
                         date = "2026-07-21"
@@ -263,7 +264,7 @@ fun HomePreview() {
                     TransactionEntity(
                         id = 12321312312,
                         title = "test",
-                        amount = 16.12,
+                        amount = BigDecimal("16.30"),
                         category = "testing",
                         type = TransactionType.EXPENSE.name,
                         date = "2026-07-12"

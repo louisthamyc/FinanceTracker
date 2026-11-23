@@ -1,5 +1,6 @@
 package com.louis.tham.financetracker.core.mvi.viewmodels
 
+import java.math.BigDecimal
 import app.cash.turbine.test
 import com.louis.tham.financetracker.core.db.TransactionRepository
 import com.louis.tham.financetracker.core.models.constants.TransactionType
@@ -65,10 +66,10 @@ class AddTransactionViewModelTest {
     }
 
     @Test
-    fun onAmountChanged_withValidDigits_updatesAmountAndClearsError() {
-        viewModel.sendIntent(AddTransactionIntent.OnAmountChanged("150"))
+    fun onAmountChanged_withValidDecimal_updatesAmountAndClearsError() {
+        viewModel.sendIntent(AddTransactionIntent.OnAmountChanged("150.25"))
 
-        assertEquals("150", viewModel.currentState.amount)
+        assertEquals("150.25", viewModel.currentState.amount)
         assertFalse(viewModel.currentState.invalidFields.contains(TransactionField.AMOUNT))
         assertNull(viewModel.currentState.errorMessage)
     }
@@ -76,6 +77,13 @@ class AddTransactionViewModelTest {
     @Test
     fun onAmountChanged_withInvalidCharacters_marksAmountAsInvalid() {
         viewModel.sendIntent(AddTransactionIntent.OnAmountChanged("abc"))
+
+        assertTrue(viewModel.currentState.invalidFields.contains(TransactionField.AMOUNT))
+    }
+
+    @Test
+    fun onAmountChanged_withTooManyFractionDigits_marksAmountAsInvalid() {
+        viewModel.sendIntent(AddTransactionIntent.OnAmountChanged("12.345"))
 
         assertTrue(viewModel.currentState.invalidFields.contains(TransactionField.AMOUNT))
     }
@@ -179,10 +187,20 @@ class AddTransactionViewModelTest {
     }
 
     @Test
+    fun onSaveClicked_withScaledZeroAmount_marksAmountAsInvalid() {
+        viewModel.sendIntent(AddTransactionIntent.OnTitleChanged("Bus"))
+        viewModel.sendIntent(AddTransactionIntent.OnAmountChanged("0.00"))
+        viewModel.sendIntent(AddTransactionIntent.OnCategoryChanged("Transport"))
+        viewModel.sendIntent(AddTransactionIntent.OnSaveClicked)
+
+        assertTrue(viewModel.currentState.invalidFields.contains(TransactionField.AMOUNT))
+    }
+
+    @Test
     fun onSaveClicked_withValidData_insertsTransactionAndEmitsNavigateBack() = runTest {
         viewModel.effect.test {
             viewModel.sendIntent(AddTransactionIntent.OnTitleChanged("Book"))
-            viewModel.sendIntent(AddTransactionIntent.OnAmountChanged("25"))
+            viewModel.sendIntent(AddTransactionIntent.OnAmountChanged("25.10"))
             viewModel.sendIntent(AddTransactionIntent.OnCategoryChanged("Other"))
             viewModel.sendIntent(AddTransactionIntent.OnNoteChanged("Unit Test"))
             viewModel.sendIntent(AddTransactionIntent.OnTypeSelected(TransactionType.EXPENSE))
@@ -197,7 +215,7 @@ class AddTransactionViewModelTest {
                 val list = awaitItem()
                 assertEquals(1, list.size)
                 assertEquals("Book", list[0].title)
-                assertEquals(25.0, list[0].amount, 0.001)
+                assertEquals(BigDecimal("25.10"), list[0].amount)
                 assertEquals("Other", list[0].category)
                 assertEquals(TransactionType.EXPENSE.name, list[0].type)
                 assertEquals("Unit Test", list[0].note)

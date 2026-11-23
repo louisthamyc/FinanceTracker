@@ -1,5 +1,6 @@
 package com.louis.tham.financetracker.core.mvi.viewmodels
 
+import java.math.BigDecimal
 import app.cash.turbine.test
 import com.louis.tham.financetracker.core.db.TransactionRepository
 import com.louis.tham.financetracker.core.models.constants.TransactionType
@@ -31,8 +32,8 @@ class HomeViewModelTest {
     @Test
     fun init_loadsTransactionsAndSetsLoadingFalse() = runTest {
         val sampleTransactions = listOf(
-            TransactionEntity(id = 1, title = "Groceries", amount = 85.0, type = TransactionType.EXPENSE.name),
-            TransactionEntity(id = 2, title = "Salary", amount = 3000.0, type = TransactionType.INCOME.name)
+            TransactionEntity(id = 1, title = "Groceries", amount = BigDecimal("85.0"), type = TransactionType.EXPENSE.name),
+            TransactionEntity(id = 2, title = "Salary", amount = BigDecimal("3000.0"), type = TransactionType.INCOME.name)
         )
         fakeDao.setInitialTransactions(sampleTransactions)
 
@@ -69,7 +70,7 @@ class HomeViewModelTest {
             assertEquals(0, initialState.transactionList.size)
 
             fakeDao.insertTransaction(
-                TransactionEntity(id = 1, title = "Electric Bill", amount = 95.0, type = TransactionType.EXPENSE.name)
+                TransactionEntity(id = 1, title = "Electric Bill", amount = BigDecimal("95.0"), type = TransactionType.EXPENSE.name)
             )
 
             viewModel.sendIntent(HomeIntent.OnGetAllTransaction)
@@ -93,7 +94,7 @@ class HomeViewModelTest {
             // Insert new transaction to repository
             repository.insertTransaction(
                 title = "Freelance",
-                amount = 500.0,
+                amount = BigDecimal("500.0"),
                 category = "Other",
                 type = TransactionType.INCOME.name,
                 date = "2026-03-24",
